@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LLM Highlighter</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 380px;
+            margin: 0;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #1e1f24;
+            color: #e8e8ea;
+        }
+
+        h1 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #9a9aa2;
+            margin: 0 0 16px 0;
+            line-height: 1.4;
+        }
+
+        .card {
+            background: #2a2b32;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #b5b5bd;
+            margin-bottom: 6px;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #3d3e46;
+            background: #1e1f24;
+            color: #e8e8ea;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        select {
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+            margin-bottom: 10px;
+        }
+
+        textarea:focus, select:focus {
+            outline: none;
+            border-color: #6c7bff;
+        }
+
+        button {
+            width: 100%;
+            padding: 9px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity .15s;
+        }
+
+        button:hover {
+            opacity: 0.88;
+        }
+
+        .sendBtn {
+            background: #6c7bff;
+            color: #fff;
+        }
+
+        .highBtn {
+            background: #ffd54f;
+            color: #1e1f24;
+        }
+    </style>
+</head>
+<body>
+    <h1>LLM Highlighter</h1>
+    <p class="subtitle">Chat about this page, or let the LLM highlight the most important text on it.</p>
+
+    <div class="card" id="chatContainer">
+        <label for="model-name">Model</label>
+        <select name="model-name" id="model-name">
+            <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+        </select>
+
+        <label for="chatInput">Ask a question</label>
+        <textarea id="chatInput" placeholder="What is this page about?"></textarea>
+        <button id="sendBtn" class="sendBtn">Send</button>
+    </div>
+
+    <div class="card highBtnDiv">
+        <button id="highBtn" class="highBtn">Highlight important text</button>
+    </div>
+
+    <div class="card">
+        <label for="responseArea">Response</label>
+        <textarea id="responseArea" readonly placeholder="Output will appear here..."></textarea>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>

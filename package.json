@@ -1,0 +1,19 @@
+{
+  "name": "llm-highlighter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild content.js --bundle --outfile=dist/content.js && shx cp manifest.json index.html index.js background.js icon.png dist/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@mozilla/readability": "^0.6.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "shx": "^0.4.0"
+  }
+}
