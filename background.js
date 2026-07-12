@@ -24,4 +24,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         return true;
     }
+
+    if (message.action === "fetchHighlightByQuestion") {
+        fetch("http://localhost:8000/api/question-highlight", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(message.body)
+        })
+            .then((res) => res.json())
+            .then((data) => sendResponse({ ok: true, data }))
+            .catch((err) => sendResponse({ ok: false, error: err.message }));
+
+        return true;
+    }
 });

@@ -46,3 +46,21 @@ document.getElementById("highBtn").addEventListener("click", async () => {
         showResponse(`Error: ${err.message}`);
     }
 });
+
+document.getElementById("questionBtn").addEventListener("click", async () => {
+    const modelName = document.getElementById("model-name").value;
+    const query = document.getElementById("chatInput").value;
+    try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const result = await chrome.tabs.sendMessage(tab.id, { action: "highlightByQuestion", modelName, query });
+
+        if (!result?.ok) {
+            showResponse(`Error: ${result?.error || "Unknown error"}`);
+            return;
+        }
+
+        showResponse(`Highlighted ${result.count} section(s) on the page.`);
+    } catch (err) {
+        showResponse(`Error: ${err.message}`);
+    }
+});

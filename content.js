@@ -169,4 +169,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         return true;
     }
+
+    if (message.action === "highlightByQuestion") {
+        const { text, nodeMap } = buildTextNodeMap();
+
+        chrome.runtime.sendMessage(
+            { action: "fetchHighlightByQuestion", body: { pageData: { text }, modelName: message.modelName, query: message.query } },
+            (result) => {
+                if (!result?.ok) {
+                    console.error("Highlight error:", result?.error);
+                    sendResponse({ ok: false, error: result?.error || "Unknown error" });
+                    return;
+                }
+                const highlights = result.data?.response?.highlights || [];
+                applyHighlights(highlights, nodeMap);
+                sendResponse({ ok: true, count: highlights.length });
+            }
+        );
+
+        return true;
+    }
 });

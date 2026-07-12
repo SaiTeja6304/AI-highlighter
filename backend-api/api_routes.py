@@ -28,3 +28,12 @@ async def highlight_endpoint(payload: dict):
         return {"response": response}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/question-highlight", status_code=200, response_model=dict)
+async def question_highlight_endpoint(payload: dict):
+    """Endpoint to highlight text on webpage based on question"""
+    try:
+        response = generate_question_highlight(payload)
+        return {"response": response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

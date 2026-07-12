@@ -17,6 +17,21 @@ def load_model(model_name: str="gemini-3.5-flash"):
     )
     return model
 
+def _extract_text(content) -> str:
+    """Normalize LangChain message content to a plain string,
+    regardless of whether the provider returned a string or a list of content blocks."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for block in content:
+            if isinstance(block, str):
+                parts.append(block)
+            elif isinstance(block, dict):
+                parts.append(block.get("text", ""))
+        return "".join(parts)
+    return str(content)
+
 
 def generate_chat_response(payload: dict) -> str:
     try:
@@ -42,7 +57,7 @@ def generate_chat_response(payload: dict) -> str:
         Now answer the question based on the page content
         """
         response = model.invoke(prompt)
-        return response.content
+        return _extract_text(response.content)
     except Exception as e:
         raise Exception(f"Error generating chat response: {str(e)}")
 
@@ -50,7 +65,7 @@ def parse_json(response):
     try:
         # Extract content if response is a message object
         if hasattr(response, "content"):
-            text = response.content
+            text = _extract_text(response.content)
         else:
             text = str(response)
         
@@ -105,6 +120,49 @@ def generate_highlight_response(payload: dict) -> dict:
         <page>
             {page_text}
         </page>
+        """
+        response = model.invoke(prompt)
+        parsed = parse_json(response)
+        sentences = json.loads(parsed).get("sentences", [])
+
+        offsets = []
+        for sentence in sentences:
+            offsets.extend(find_all_occurrences(page_text, sentence))
+
+        return {"highlights": offsets}
+    except Exception as e:
+        raise Exception(f"Error generating highlight response: {str(e)}")
+
+def generate_question_highlight(payload: dict) -> dict:
+    try:
+        model = load_model(payload.get("modelName"))
+        query = payload.get("query")
+        page = payload.get("pageData")
+        page_text = page.get("text") if isinstance(page, dict) else page
+
+        if not page_text or not page_text.strip():
+            return {"highlights": []}
+
+        prompt = f"""
+        Identify the sentences on this page that answers the question.
+
+        Return ONLY valid JSON, no preamble, no markdown, in this exact format:
+        {{
+            "sentences": ["...", "...", "..."]
+        }}
+
+        Return the exact sentences copied verbatim from the page.
+        Do not summarize. Do not rewrite.
+
+        <page>
+            {page_text}
+        </page>
+
+        Here is the question:
+        
+        <question>
+            {query}
+        </question>
         """
         response = model.invoke(prompt)
         parsed = parse_json(response)
